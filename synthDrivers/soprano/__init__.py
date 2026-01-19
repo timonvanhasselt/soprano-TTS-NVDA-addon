@@ -3,6 +3,7 @@ import threading
 import queue
 import ctypes
 import numpy as np
+import languageHandler
 from collections import OrderedDict
 from nvwave import WavePlayer, AudioPurpose
 from logHandler import log
@@ -81,6 +82,15 @@ class SynthDriver(BaseSynthDriver):
         threading.Thread(target=self._initialize_async, daemon=True).start()
         self._worker_thread = _SynthQueueThread(self)
         self._worker_thread.start()
+
+    @property
+    def language(self):
+        """Sets the voice to English by default as the model currently only supports English."""
+        return "en"
+
+    def languageIsSupported(self, lang):
+        """Ensures NVDA does not stop speaking when language changes occur in windows."""
+        return True
 
     def _initialize_async(self):
         ctypes.windll.ole32.CoInitialize(None)
